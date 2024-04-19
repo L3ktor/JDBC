@@ -1,23 +1,41 @@
 package jm.task.core.jdbc.util;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+
+import jm.task.core.jdbc.model.User;
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 
 public class Util {
-    private static final String URL = "jdbc:mysql://localhost:3306/mydbtest";
-    private static final String USERNAME = "Krool";
-    private static final String PASSWORD = "Krool";
-    public static Connection getConnection() {
-        Connection connection = null;
+    private static final String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String HOST = "jdbc:mysql://localhost:3306/mydbtest?useSSL=false&allowMultiQueries=true&serverTimezone=UTC";
+    private static final String USER = "Krool";
+    private static final String PASS = "Krool";
+    public static SessionFactory sF = null;
+
+    public static SessionFactory getConnection() {
+
         try {
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            if (!connection.isClosed()) {
-                System.out.println("We are connected!");
-            }
-        } catch (SQLException e) {
-            System.out.println("There is no connection");
+            Configuration configuration = new Configuration()
+                    .setProperty("hibernate.connection.driver_class", DRIVER)
+                    .setProperty("hibernate.connection.url", HOST)
+                    .setProperty("hibernate.connection.username", USER)
+                    .setProperty("hibernate.connection.password", PASS)
+                    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+                    .addAnnotatedClass(User.class)
+                    .setProperty("hibernate.c3p0.min_size", "5")
+                    .setProperty("hibernate.c3p0.max_size", "45")
+                    .setProperty("hibernate.c3p0.max_statements", "45");
+
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+            sF = configuration.buildSessionFactory(serviceRegistry);
+        } catch (HibernateException e) {
+            e.printStackTrace();
         }
-        return connection;
+        return sF;
     }
 }
+
