@@ -9,7 +9,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
 public class Util {
-    private static final String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String HOST = "jdbc:mysql://localhost:3306/mydbtest?useSSL=false&allowMultiQueries=true&serverTimezone=UTC";
     private static final String USER = "Krool";
     private static final String PASS = "Krool";

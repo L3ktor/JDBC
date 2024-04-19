@@ -21,7 +21,7 @@ public class UserDaoHibernateImpl implements UserDao {
         Session session = sF.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            session.createNativeQuery("CREATE TABLE IF NOT EXISTS test.users" +
+            session.createNativeQuery("CREATE TABLE IF NOT EXISTS users" +
                     " (id mediumint not null auto_increment, name VARCHAR(45), " +
                     "lastname VARCHAR(45), " +
                     "age tinyint, " +
@@ -43,8 +43,8 @@ public class UserDaoHibernateImpl implements UserDao {
     public void dropUsersTable() {
         Session session = sF.openSession();
         Transaction tx = session.beginTransaction();
-        try{
-            session.createNativeQuery("DROP TABLE IF EXISTS test.users").executeUpdate();
+        try(session){
+            session.createNativeQuery("DROP TABLE IF EXISTS users").executeUpdate();
             tx.commit();
             System.out.println("Таблица удалена");
         }catch (HibernateException e){
@@ -52,8 +52,6 @@ public class UserDaoHibernateImpl implements UserDao {
             if(tx != null){
                 tx.rollback();
             }
-        }finally {
-            session.close();
         }
 
     }
@@ -121,7 +119,7 @@ public class UserDaoHibernateImpl implements UserDao {
         Session session = sF.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            session.createNativeQuery("TRUNCATE TABLE test.users").executeUpdate();
+            session.createNativeQuery("TRUNCATE TABLE users").executeUpdate();
             tx.commit();
             System.out.println("Таблица очищена");
         }catch (HibernateException e){
