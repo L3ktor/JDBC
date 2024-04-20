@@ -10,7 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
-    private final SessionFactory sF = Util.getConnection();
+    private final SessionFactory sF = Util.getSF();
     public UserDaoHibernateImpl() {
 
     }
@@ -18,10 +18,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        Session session = sF.openSession();
-        Transaction tx = session.beginTransaction();
-        try {
-            session.createNativeQuery("CREATE TABLE IF NOT EXISTS users" +
+        Transaction tx = null;
+        try(Session session1 = sF.openSession()) {
+            tx = session1.beginTransaction();
+            session1.createNativeQuery("CREATE TABLE IF NOT EXISTS users" +
                     " (id mediumint not null auto_increment, name VARCHAR(45), " +
                     "lastname VARCHAR(45), " +
                     "age tinyint, " +
@@ -33,18 +33,16 @@ public class UserDaoHibernateImpl implements UserDao {
             if(tx != null){
                 tx.rollback();
             }
-        }finally {
-            session.close();
         }
 
     }
 
     @Override
     public void dropUsersTable() {
-        Session session = sF.openSession();
-        Transaction tx = session.beginTransaction();
-        try(session){
-            session.createNativeQuery("DROP TABLE IF EXISTS users").executeUpdate();
+        Transaction tx = null;
+        try(Session session2 = sF.openSession()){
+            tx = session2.beginTransaction();
+            session2.createNativeQuery("DROP TABLE IF EXISTS users").executeUpdate();
             tx.commit();
             System.out.println("Таблица удалена");
         }catch (HibernateException e){
@@ -58,10 +56,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        Session session = sF.openSession();
-        Transaction tx = session.beginTransaction();
-        try{
-            session.save(new User(name,lastName,age));
+        Transaction tx = null;
+        try(Session session3 = sF.openSession()){
+            tx = session3.beginTransaction();
+            session3.save(new User(name,lastName,age));
             tx.commit();
             System.out.println("User с именем – " + name + " добавлен в базу данных");
         }catch(HibernateException e){
@@ -69,18 +67,15 @@ public class UserDaoHibernateImpl implements UserDao {
             if(tx != null){
                 tx.rollback();
             }
-        }finally {
-            session.close();
         }
-
     }
 
     @Override
     public void removeUserById(long id) {
-        Session session = sF.openSession();
-        Transaction tx = session.beginTransaction();
-        try {
-            session.delete(session.get(User.class, id));
+        Transaction tx = null;
+        try(Session session4 = sF.openSession()){
+            tx = session4.beginTransaction();
+            session4.delete(session4.get(User.class, id));
             tx.commit();
             System.out.println("User удален");
         }catch (HibernateException e){
@@ -88,29 +83,25 @@ public class UserDaoHibernateImpl implements UserDao {
             if(tx != null){
                 tx.rollback();
             }
-        }finally {
-            session.close();
         }
 
     }
 
     @Override
     public List<User> getAllUsers() {
-        Session session = sF.openSession();
-        CriteriaQuery<User> cq = session.getCriteriaBuilder().createQuery(User.class);
-        cq.from(User.class);
-        Transaction tx = session.beginTransaction();
-        List<User> uL = session.createQuery(cq).getResultList();
-        try {
+        List<User> uL = null;
+        Transaction tx = null;
+        try(Session session5 = sF.openSession()) {
+            CriteriaQuery<User> cq = session5.getCriteriaBuilder().createQuery(User.class);
+            cq.from(User.class);
+            tx = session5.beginTransaction();
             tx.commit();
+            uL = session5.createQuery(cq).getResultList();
             return uL;
         }catch (HibernateException e){
             e.printStackTrace();
             tx.rollback();
-        }finally {
-            session.close();
-        }
-        return uL;
+        }return uL;
 
     }
 

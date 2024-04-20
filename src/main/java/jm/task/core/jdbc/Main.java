@@ -10,13 +10,12 @@ import java.sql.SQLException;
 
 
 public class Main {
-    private static final UserService userService = new UserServiceImpl();
-    private static final User user1 = new User("Ivan", "Petrov", (byte) 30);
-    private static final User user2 = new User("Petr", "Ivanov", (byte) 18);
-    private static final User user3 = new User("John", "Smith", (byte) 46);
-    private static final User user4 = new User("Harry", "Potter", (byte) 52);
-
     public static void main(String[] args) throws SQLException {
+        UserService userService = new UserServiceImpl();
+        User user1 = new User("Naruto","Uzumaki",(byte) 16);
+        User user2 = new User("Sasuke","Uthiha",(byte) 17);
+        User user3 = new User("Sakura","Haruno",(byte) 16);
+        User user4 = new User("Hatake","Kakashi",(byte) 33);
         userService.createUsersTable();
 
         userService.saveUser(user1.getName(), user1.getLastName(), user1.getAge());

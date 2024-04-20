@@ -15,7 +15,7 @@ public class Util {
     private static final String PASS = "Krool";
     public static SessionFactory sF = null;
 
-    public static SessionFactory getConnection() {
+    public static SessionFactory getSF() {
 
         try {
             Configuration configuration = new Configuration()
